@@ -17,7 +17,7 @@ class Fraction:
             raise RuntimeError("Both numerator and denominator need to be integers!")
 
 
-    def __check_type(thing):
+    def __check_type(self,thing):
 
         otherfrac = None
 
@@ -107,7 +107,6 @@ class Fraction:
 
     #override the default subtraction method
     def __sub__(self,thing):
-
         otherfrac = self.__check_type(thing)
 
         new_shared_denom = self.den * otherfrac.den
@@ -125,7 +124,7 @@ class Fraction:
     #overide the multiplication
     def __mul__(self,thing):
         otherfrac = self.__check_type(thing)
-        
+
         new_numerator = self.num * otherfrac.num
         new_denom = self.den * otherfrac.den
 
@@ -135,14 +134,8 @@ class Fraction:
 
     #override the /  method
     def __truediv__(self,thing):
-        if isinstance(thing,int):
-            otherfrac = Fraction(thing,1)
-        elif isinstance(thing,float):
-            otherfrac = Fraction(int(thing * 100), 100)
-        elif isinstance(thing,Fraction):
-            otherfrac = thing
-        else:
-            raise RuntimeError("What is that? You can't divide that!")
+        otherfrac = self.__check_type(thing)
+
         flipped_divisor = Fraction(otherfrac.den,otherfrac.num)
 
 
