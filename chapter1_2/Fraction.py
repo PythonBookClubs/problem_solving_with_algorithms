@@ -26,7 +26,7 @@ class Fraction:
         elif isinstance(thing,float):
             otherfrac = Fraction(int(thing * 100), 100)
         elif isinstance(thing,Fraction):
-            otherfrac = Fraction
+            otherfrac = thing
         else:
             raise ValueError("What is that? Only ints or floats plz!")
 
@@ -134,8 +134,9 @@ class Fraction:
 
     #override the /  method
     def __truediv__(self,thing):
+        print("HEY GIRL")
         otherfrac = self.__check_type(thing)
-
+        print(otherfrac)
         flipped_divisor = Fraction(otherfrac.den,otherfrac.num)
 
 

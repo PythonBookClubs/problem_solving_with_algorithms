@@ -23,6 +23,17 @@ class Connector:
 
     def getTo(self):
         return self.togate
+class Circuit:
+     """
+     a circuit class contains logic gates and connectors
+     """
+
+     def __init__(self, gates, connections):
+        self.gates = gates
+        self.connections = connections
+        self.input = findinputGates(gates,connections)
+        self.output = findOutputGate(gates,connections)
+
 class BinaryGate(LogicGate):
 
     def __init__(self, n):
