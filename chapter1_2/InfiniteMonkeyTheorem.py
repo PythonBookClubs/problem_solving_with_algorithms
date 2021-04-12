@@ -2,6 +2,7 @@ import random
 
 GOAL = "methinks it is like a weasel"
 GOAL_LENGTH = len(GOAL)
+CHARACTER_SET = "abcdefghijklmnopqrstuvwxyz "
 
 
 def score(generated: str) -> float:
@@ -25,7 +26,6 @@ def generate() -> str:
     Returns:
         str: {length}-long string.
     """
-    CHARACTER_SET = "abcdefghijklmnopqrstuvwxyz "
     list_of_char = [random.choice(CHARACTER_SET) for _ in range(GOAL_LENGTH)]
     return "".join(list_of_char)
 
