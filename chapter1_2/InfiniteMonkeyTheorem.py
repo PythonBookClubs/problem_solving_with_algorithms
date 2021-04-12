@@ -19,17 +19,14 @@ def score(generated: str) -> float:
     return (GOAL_LENGTH - errors) / GOAL_LENGTH * 100
 
 
-def generate(length: int) -> str:
+def generate() -> str:
     """Generates a string by choosing random characters from [a-z ]
-
-    Args:
-        length (int): The length of the string to be generated.
 
     Returns:
         str: {length}-long string.
     """
     CHARACTER_SET = "abcdefghijklmnopqrstuvwxyz "
-    list_of_char = [random.choice(CHARACTER_SET) for _ in range(length)]
+    list_of_char = [random.choice(CHARACTER_SET) for _ in range(GOAL_LENGTH)]
     return "".join(list_of_char)
 
 
@@ -56,7 +53,6 @@ def monkey_tries_to_type(print_progress: bool = False) -> int:
     best string generated so far and its score every 1000 tries."
 
     Args:
-        goal (str): The string that the "monkey" attempts to type.
         print_progress (bool): If True, for every 1000 tries, print out the best string
             generated so far and its score.
 
@@ -66,7 +62,7 @@ def monkey_tries_to_type(print_progress: bool = False) -> int:
     attempts, best_score = 0, 0
     best_generated_string = ""
     while best_score != 100:
-        generated = generate(GOAL_LENGTH)
+        generated = generate()
         current_score = score(generated=generated)
         if current_score >= best_score:
             best_score = current_score
