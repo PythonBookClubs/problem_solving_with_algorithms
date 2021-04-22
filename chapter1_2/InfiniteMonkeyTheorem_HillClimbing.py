@@ -38,7 +38,7 @@ def report_progress(print_progress: bool, attempts: int, generated: List[str]):
         print(f"Attempt {attempts}: {''.join(generated)}")
 
 
-def monkey_tries_to_type(print_progress: bool = False) -> int:
+def monkey_tries_to_type(print_progress: bool = False, goal_text: str = GOAL) -> int:
     """This monkey (function) attempts to type the {goal} by hitting random keys.
 
     "...improve upon the program ... by keeping letters that are correct and **only
@@ -49,6 +49,7 @@ def monkey_tries_to_type(print_progress: bool = False) -> int:
     Args:
         print_progress (bool): If True, print out the string generated whenever the
             program chooses the correct key.
+        goal_text (str): The string that the monkey aims to write.
 
     Returns:
         int: The number of attempts until the monkey finally types the {GOAL}
@@ -59,7 +60,7 @@ def monkey_tries_to_type(print_progress: bool = False) -> int:
     # Completely create new string with random keys
     # until there's least one correct character (best generated string).
     while current_score == 0:
-        generated = generate_fresh()
+        generated = generate_fresh(goal_text)
         current_score = score(generated=generated)
         attempts += 1
         report_progress(print_progress, attempts, list(generated))
@@ -73,11 +74,12 @@ if __name__ == "__main__":
 
     print("\nHow does it scale?")
     for num in [1, 10, 100, 1000]:
+        goal_text = GOAL * num
         print(
-            f"Executing {num}x:",
+            f"Goal text is {GOAL_LENGTH * num}-character long:",
             timeit(
-                "monkey_tries_to_type()",
+                f"monkey_tries_to_type(goal_text='{goal_text}')",
                 "from __main__ import monkey_tries_to_type",
-                number=num,
+                number=10,
             ),
         )

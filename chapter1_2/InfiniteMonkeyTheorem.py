@@ -20,13 +20,17 @@ def score(generated: str) -> float:
     return (GOAL_LENGTH - errors) / GOAL_LENGTH * 100
 
 
-def generate() -> str:
+def generate(goal_text: str = GOAL) -> str:
     """Generates a string by choosing random characters from [a-z ]
+
+    Args:
+        goal_text (str): The string the monkey aims to type.
 
     Returns:
         str: {length}-long string.
     """
-    list_of_char = [random.choice(CHARACTER_SET) for _ in range(GOAL_LENGTH)]
+    goal_length = len(goal_text)
+    list_of_char = [random.choice(CHARACTER_SET) for _ in range(goal_length)]
     return "".join(list_of_char)
 
 
