@@ -1,5 +1,4 @@
 import random
-from time import time
 from timeit import timeit
 from typing import List
 
@@ -69,7 +68,7 @@ def monkey_tries_to_type(print_progress: bool = False) -> int:
 
 
 if __name__ == "__main__":
-    print("Run the program...")
+    print("Sample run of the program:")
     monkey_tries_to_type(print_progress=True)
 
     print("\nHow does it scale?")
