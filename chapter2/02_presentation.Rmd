@@ -1,0 +1,316 @@
+---
+title: "Session 2: Analysis"  
+subtitle: "Problem Solving with Algorithms and Data Structures using Python"
+author: ""
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(gganimate)
+library(xaringanthemer)
+library(knitr)
+library(reticulate)
+
+theme_set(theme_minimal())
+
+xaringanExtra::use_freezeframe(
+  responsive = FALSE
+)
+xaringanExtra::use_tachyons()
+
+opts_chunk$set(
+  dev = "ragg_png"
+)
+
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+style_mono_accent(
+  base_color = "#4a6878",
+  base_font_size = "1.2rem"
+)
+```
+
+## Objectives
+
+<style>
+ul {
+  list-style-type: "\2713";
+}
+
+.inc li {
+  color: grey;
+}
+li:last-child {
+  color: black;
+}
+</style>
+
+.f3.inc[
+{{content}}
+]
+
+--
+
+- **What** and **why** of algorithm analysis.
+{{content}}
+--
+
+- “Big-O”
+{{content}}
+--
+
+-  “Big-O” execution time of common operations on Python lists and dictionaries.
+{{content}}
+--
+
+- Implementation differences of Python data types
+{{content}}
+--
+
+- Benchmarks with the `Timer` module
+
+---
+
+## The Big O
+
+.f3[
+- n: “size of the problem,”
+
+- “T(n) is the time it takes to solve a problem of size n, namely 1+n steps.”
+
+- O(f(n)): Order of magnitude function: the part of T(n) that increases the fastest as the value of n increases
+]
+
+
+---
+
+## The Big O
+
+```{r anim, echo=FALSE, cache=TRUE}
+exp = c(
+  "1000+x",
+  "100*x",
+  "10*x^2",
+  "1*x^3"
+)
+
+from = 0
+to = 30
+
+df = crossing(
+  exp = exp,
+  x = seq(from, to, length.out = 100)
+) %>% 
+  group_by(exp) %>% 
+  mutate(
+  y = eval(parse(text = exp))
+) %>% 
+  ungroup()
+
+plt = df %>% 
+  ggplot(aes(x, y, color = exp, group = exp)) +
+  geom_line(size = 1.4) +
+  geom_text(aes(label = exp, size = 3.8),
+            vjust = 0,
+            hjust = 0,
+            show.legend = FALSE,
+            fontface = "bold") +
+  labs(color = "",
+       y = "") +
+  guides(color = "none") +
+  theme_minimal() +
+  theme(text = element_text(family = "Fira Mono", size = 14)) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  ggthemes::scale_color_tableau() +
+  view_follow() +
+  transition_reveal(x) 
+
+animate(plt,
+        device = "ragg_png",
+        fps = 24,
+        duration = 5,
+        width = 1280,
+        height = 720)
+```
+
+---
+
+## Big-O Functions
+
+![](https://runestone.academy/runestone/books/published/pythonds/_images/newplot.png)
+
+---
+
+## Lists and Dicts
+
+- [Lists](https://runestone.academy/runestone/books/published/pythonds3/AlgorithmAnalysis/Lists.html)
+- [Dicts](https://runestone.academy/runestone/books/published/pythonds3/AlgorithmAnalysis/Dictionaries.html)
+
+---
+
+## timeit module
+
+```{python, include=FALSE}
+from timeit import Timer
+
+del_timer = Timer("del x[0]", "from __main__ import x")
+
+ns = list(range(100, 100001, 1000))
+t = []
+
+for i in ns:
+    x = list(range(i))
+    del x[0]
+    del_zero_t = del_timer.timeit(number=10)
+    t.append(del_zero_t)
+
+```
+
+
+```{r, echo=FALSE, fig.width=12}
+tibble(
+  t  = py$t,
+  n  = py$ns
+) %>% 
+  pivot_longer(-n) %>% 
+  ggplot(aes(n, value, group = name, color = name)) +
+  geom_line() 
+
+```
+
+
+
+
+
+
+```{r, include=FALSE}
+knitr::knit_exit()
+```
+
+## Exercises
+
+### min :: Order a => [a] -> a
+
+Write two Python functions to find the minimum number in a list.
+The first function should compare each number to every other number on the list. $O(n^2)$.
+The second function should be linear $O(n)$.
+
+```{python}
+import math
+l = list(range(11))
+
+def myMin(xs):
+  m = math.inf
+  for x in xs:
+    if x < m: m = x
+  return m
+      
+myMin(l)    
+```
+
+### Anagrams
+
+Checking Off
+
+```{python}
+def anagramSolution1(s1,s2):
+    stillOK = True
+    if len(s1) != len(s2):
+        stillOK = False
+        
+    alist = list(s2)
+    pos1 = 0
+    
+    while pos1 < len(s1) and stillOK:
+        pos2 = 0
+        found = False
+        while pos2 < len(alist) and not found:
+            if s1[pos1] == alist[pos2]:
+                found = True
+            else:
+                pos2 = pos2 + 1
+        if found:
+            alist[pos2] = None
+        else:
+            stillOK = False
+        pos1 = pos1 + 1
+        
+    return stillOK
+
+anagramSolution1('abcd','dcba')
+```
+
+Solution 2: Sort and Compare
+
+```{python}
+def anagramSolution2(s1,s2):
+    alist1 = list(s1)
+    alist2 = list(s2)
+    alist1.sort()
+    alist2.sort()
+    pos = 0
+    matches = True
+    while pos < len(s1) and matches:
+        if alist1[pos]==alist2[pos]:
+            pos = pos + 1
+        else:
+            matches = False
+    return matches
+  
+print(anagramSolution2('abcde','edcba'))
+```
+
+
+Solution 3: Brute Force
+
+
+```{python}
+
+```
+
+
+Solution 4: Count and Compare
+
+```{python}
+def anagramSolution4(s1,s2):
+    c1 = [0]*26
+    c2 = [0]*26
+    for i in range(len(s1)):
+        pos = ord(s1[i])-ord('a')
+        c1[pos] = c1[pos] + 1
+    for i in range(len(s2)):
+        pos = ord(s2[i])-ord('a')
+        c2[pos] = c2[pos] + 1
+    j = 0
+    stillOK = True
+    while j<26 and stillOK:
+        if c1[j]==c2[j]:
+            j = j + 1
+        else:
+            stillOK = False
+    return stillOK
+
+print(anagramSolution4('apple','pleap'))
+```
+
+> On many occasions you will need to make decisions between time and space trade-offs.
+
+## Performance of Python Data Structures
+
+
+
+
+
+
+
